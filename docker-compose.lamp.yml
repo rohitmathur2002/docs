@@ -1,0 +1,29 @@
+version: "3.3"
+services:
+   php-apache:
+     image: php:apache
+     ports: 
+       - 80:80
+     volumes:
+       app:/var/www/html
+   db:
+     image: mysql:5.7
+     restart: always
+     command:
+     environment:
+       MYSQL_USER: phpmyadmin
+       MYSQL_PASSWORD: phpadmin@123
+       MYSQL_ROOT_PASSWORD: admin@123
+       MYSQL_DATABASE: TESTDB
+     volumes:
+      - db:/var/lib/mysql
+   phpmyadmin:
+      image: phpmyadmin
+      restart: always
+      environment:
+        PMA_HOST: db
+      ports:
+        - 8000:80
+volumes:
+  app:
+  db:

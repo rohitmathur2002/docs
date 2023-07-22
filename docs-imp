@@ -1,0 +1,387 @@
+  target.yml (playbooks)
+---# Target playbook
+- hosts: demo
+- user: ansible
+- become: yes
+- connection: ssh
+- gather_facts: yes
+
+-tasks
+ -name: http is on
+  action:yum pkg=httpd state=present
+  :wq
+  
+  ansible demo -b -m yum -a "pkg=httpd state=present"
+  ansible demo -b -m yum -a "pkg=httpd state=present"
+  ansible demo -b -a "yum install httpd -y"
+  ansible-playbook target.yml
+  ansible-playbook target.yml --check (command for dry run )
+  ansible demo --list-hosts { forcheck host/nodes connected}
+
+ jar cvf webui. war jar cvf webui. war
+
+NODE JS PROJECT SCRIPT FOR REACT NODE JS APP:-
+
+pipeline {
+    agent {
+        docker {
+            image 'node:lts-buster-slim'
+            args '-p 3000:3000'
+        }
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh './jenkins/scripts/test.sh'
+            }
+        }
+        stage('Deliver') { 
+            steps {
+                sh './jenkins/scripts/deliver.sh' 
+                input message: 'Finished using the web site? (Click "Proceed" to continue)' 
+                sh './jenkins/scripts/kill.sh' 
+            }
+        }
+    }
+}
+
+MAVEN:- JAVA
+
+mvn clean package
+mvn test
+mvn sonar:sonar
+mvn deploy
+
+NPM:- NODE.JS
+
+npm install
+npm test
+npm run sonar
+npm publish                 
+
+FROM php:7.2-apache
+RUN docker-php-ext-install mysqli
+- ./data/:/docker-entrypoint-initdb.d
+FROM php:8.0-apache
+RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+RUN apt-get update && apt-get upgrade -y
+
+FROM php:8.0-apache
+RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+RUN apt-get update && apt-get upgrade -y
+
+FOR MERN STACK
+
+version: '3.9'
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: myapp-server
+    container_name: myapp-node-server
+    command: npm run start
+    volumes:
+      - ./server/:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+    env_file: ./server/.env
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+  mongo:
+    image: mongo:latest
+    volumes:
+      - data-volume:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: myapp-client
+    container_name: myapp-react-client
+    command: npm run start
+    volumes:
+      - ./client/:/usr/app
+      - /usr/app/node_modules
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    data-volume:
+    node_modules:
+    web-root:
+      driver: local
+      
+      
+# Production Build
+
+# Stage 1: Build react client
+FROM node:14.15.3-alpine3.12 as client
+
+# Working directory be app
+WORKDIR /usr/app/client/
+
+COPY client/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# copy local files to app folder
+COPY client/ ./
+RUN ls
+
+RUN npm run build
+
+# Stage 2 : Build Server
+
+FROM node:14.15.3-alpine3.12
+
+WORKDIR /usr/src/app/
+COPY --from=client /usr/app/client/build/ ./client/build/
+RUN ls
+
+WORKDIR /usr/src/app/server/
+COPY server/package*.json ./
+RUN npm install -qy
+COPY server/ ./
+
+ENV PORT 8080
+
+EXPOSE 8080
+
+CMD ["npm", "start"]
+
+#  Dockerfile for Node Express Backend api (development)
+
+FROM node:14.15.3-alpine3.12
+
+ARG NODE_ENV=development
+
+# Create App Directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Install Dependencies
+COPY package*.json ./
+
+RUN npm install
+
+# Copy app source code
+COPY . .
+
+# Exports
+EXPOSE 8080
+
+CMD ["npm","start"]
+
+# Dockerfile for client
+
+# Stage 1: Build react client
+FROM node:14.15.3-alpine3.12
+
+# Working directory be app
+WORKDIR /usr/app
+
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# copy local files to app folder
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm","start"]
+
+
+version: '3.9'
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: myapp-server
+    container_name: myapp-node-server
+    command: npm run start
+    volumes:
+      - ./server/:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+    env_file: ./server/.env
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+  mongo:
+    image: mongo:latest
+    # environment:  // If Mongo Authorization is need to be enabled
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - data-volume:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: myapp-client
+    container_name: myapp-react-client
+    command: npm run start
+    volumes:
+      - ./client/:/usr/app
+      - /usr/app/node_modules
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    data-volume:
+    node_modules:
+    web-root:
+      driver: local
+      
+      version: '3.9'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file: ./server/.env
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+  mongo:
+    image: mongo
+    volumes:
+      - data-volume:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    data-volume:
+    node_modules:
+    web-root:
+      driver: local
+      
+MONGO_HOSTNAME=mongo
+MONGO_DB=myapp_db
+MONGO_PORT=27017
+mongodb://${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin
+
+
+docker service create --replicas=5 nginx
+
+docker run --cpus=.5 ubuntu
+docker run --memory=100m ubuntu
+
+192.168.1.18 128 64 32 16 8 4 2 1
+8 4 2 1 for hexa decimal
+255.255.255.0
+1100000000000001.00010010
+export IPADDR="  "
+
+auth_basic "Private Property";
+auth_basic_user_file /etc/nginx/.htpasswd;
+
+fe80::de72:7a3f:c592:7748 
+2600:1f16:071d:5120:0:0:0:0/64
+2600:1f16:071d:5120::/64
+
+cat /var/log/cloud-init-output.log
+
+service-provider::service-name::data-type-name
+
+docker kill $(docker ps -q)
+docker rm $(docker ps -a -q)
+docker rmi $(docker images -q)
+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
+ssh-keygen -t rsa -b 4096 -C "tester.donotreply.tester@gmail.com"
+cat id_rsa.pub >> ~/.ssh/authorized_keys
+on: [push]
+
+jobs:
+    deploy_job:
+    runs-on: ubuntu-latest
+    name: build&deploy
+    steps:
+        # To use this repository's private action, you must check out the repository
+        - name: Checkout
+        uses: actions/checkout@v2
+
+        - name: Install Dependencies
+        run: yarn
+        - name: Build
+        run: yarn build
+
+        - name: deploy file to server
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+            username: 'root'
+            server: '${{ secrets.SERVER_IP }}'
+            ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+            local_path: './build/*'
+            remote_path: '/var/www/react-app'
+            sftpArgs: '-o ConnectTimeout=5'
+ln -s /opt/tomee/apache-tomee-plus-9.0.0 /opt/tomee/latest
+
+https://maouriyan.medium.com/how-to-setup-ci-cd-for-node-using-github-actions-with-ssh-keys-deployed-on-ubuntu-server-a74176eeb427
+
+
+f-suite.org
+it
+SSLTrust
+Europe
+Europe
+EU
+
+
+
+

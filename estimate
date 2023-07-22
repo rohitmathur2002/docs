@@ -1,0 +1,26 @@
+Flutter application deployment
+
+This project aims to automate the deployment of a Flutter mobile application to both the Google Play Store and Apple App Store using GitHub workflows.
+
+The mobile application is already built, and the project's codebase resides in an active repository on GitHub. The goal is to establish a Continuous Deployment (CD)
+
+ pipeline for this mobile application that will auto-deploy a testing version of the app to the respective stores when changes are merged into the main-testing branch, and a live production version when changes are merged into the main branch.
+
+The main branch of the repository should also be configured to be protected to prevent direct pushes to it. This will ensure that all changes that make it to the live app have gone through the proper review and testing processes.
+
+Tasks
+Branch Configuration: Configure the main-testing and main branches according to the described workflow. Ensure the main branch is protected to only allow changes through pull requests.
+
+Set Up Deployment Keys: Generate and safely store secure API keys for both the Google Play Console and the Apple Developer account. These will be necessary to authenticate the CD pipeline to these services.
+
+Configure GitHub Actions Workflow for Android: Set up a GitHub Actions workflow that triggers on pushes to the main-testing and main branches. When triggered, the workflow should assemble the Android application, increment the version number, and deploy the build APK to the Google Play Store. The main-testing branch should deploy to the testing track, while the main branch deploys to the production track.
+
+Configure GitHub Actions Workflow for iOS: Similarly, set up a GitHub Actions workflow for iOS that also triggers on pushes to the main-testing and main branches. This workflow should build the iOS application, increment the version number, and deploy the build IPA to the App Store. The main-testing branch should deploy to the TestFlight beta testers, while the main branch deploys to the App Store for general users.
+
+Document the Workflow: Document the entire process and workflow for future reference and for new team members. This will also help maintain the project in the long run.
+
+Testing: Ensure that the workflow performs as expected by making dummy commits and verifying that they trigger the proper builds and deployments.
+
+The success of the project will be measured by the smooth, automated deployment of the mobile application to the respective stores with the correct versioning and release tracks. It will also be seen in the stability and protection of the main branch from direct, potentially unstable commits.
+
+Give me estimates

@@ -1,0 +1,37 @@
+nginx Load Balancing
+
+nginx.conf
+
+upstream my-app {
+    server 172.17.0.1:8081 weight=1;
+    server 172.17.0.1:8082 weight=1;
+}
+
+server {
+    location / {
+        proxy_pass http://my-app;
+    }
+}
+
+Dockerfile
+
+FROM nginx
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+FROM nginx:alpine
+COPY ./nginx.conf /etc/nginx/nginx.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon-off;"]
+
+upstream app {
+    server flask:80 weight=1;
+    server nodejs:80 weight=1;
+}
+
+server {
+    listen 80;
+    location / {
+        proxy_pass http://all;
+    }
+}

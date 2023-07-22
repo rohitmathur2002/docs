@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+   This is for s3
+Parameters:
+  Bucket: 
+    Type: String
+    AllowedPattern: "[A-Za-z]+"
+    MinLength: '3'
+    MaxLength: '63'
+    Description: Bucket Name
+Resources: 
+  S3Bucket:
+     Type: 'AWS::S3::Bucket'
+     Properties:
+       BucketName: !Ref Bucket
+       Staticwebsitehosting: Enable
+Outputs:
+  BucketName: 
+    Value: !Ref S3Bucket

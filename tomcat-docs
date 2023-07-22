@@ -1,0 +1,28 @@
+<Connector port="443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+            maxThreads="200" scheme="https" secure="true"
+            SSLEnabled="true"
+            SSLCertificateFile="/etc/ssl/certs/fsuite.crt"
+            SSLCertificateKeyFile="/etc/ssl/certs/fsuite.crt" />
+			
+    <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+               maxThreads="150" SSLEnabled="true" xpoweredBy="false" server="Apache TomEE" >
+        <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />
+        <SSLHostConfig>
+            <Certificate certificateKeystoreFile="conf/localhost-rsa.jks"
+                         type="RSA" />
+		</SSLHostConfig>
+	</Connector>
+
+    <Connector port="443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+           maxThreads="150" SSLEnabled="true" scheme="https" secure="true" >
+    <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol" />
+    <SSLHostConfig>
+        <Certificate certificateKeyFile="conf/fsuite.pem"
+                     certificateFile="conf/fsuite.crt"
+                     certificateChainFile="conf/fsuiteca.cer"
+                     type="RSA" />
+    </SSLHostConfig>
+ </Connector>
+
+https://medium.com/@mashrur123/a-step-by-step-guide-to-securing-a-tomcat-server-with-letsencrypt-ssl-certificate-65cd26290b70
+

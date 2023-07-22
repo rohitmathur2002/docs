@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+  wp:
+    image: wordpress
+    restart: always
+    depends_on: db
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress@123
+      WORDPRESS_DB_NAME: wordpressdb
+    volumes:
+      - ./app:/var/www/html
+    ports:
+      - "80:80"
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: root
+      MYSQL_PASSWORD: wordpress@123
+      MYSQL_ROOT_PASSWORD: estep@123#
+    expose:
+      - 3306
+volumes:
+  app: {}
