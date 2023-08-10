@@ -102,3 +102,41 @@ EXPOSE 80
 
 # Start Apache
 CMD ["apache2-foreground"]
+
+# Use a PHP image as the base
+FROM php:7.4-apache
+
+# Install necessary packages and dependencies
+RUN apt-get update && apt-get install -y \
+    libfontconfig1 libfreetype6 libjpeg62-turbo libx11-6 libxcb1 libxext6 libxrender1 \
+    libpng-dev libzip-dev zip unzip
+
+# Install Google Chrome and ChromeDriver
+RUN apt-get update && apt-get install -y gnupg && \
+    curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && apt-get clean
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo pdo_mysql gd zip
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy your PHP application files into the container
+COPY . /var/www/html/
+
+# Install chrome-php library
+RUN composer require --dev chrome-php/chrome
+
+# Expose port 80 for Apache
+EXPOSE 80
+
+# Start Apache
+CMD ["apache2-foreground"]
+
