@@ -1,0 +1,71 @@
+# Use an official Python runtime as a parent image
+FROM python:3.8-slim
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Make port 8501 available to the world outside this container
+EXPOSE 8501
+
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["streamlit", "run", "app.py"]
+
+=========================================================================================================================
+# Use a Chainlink-specific base image if available, or a generic base image
+FROM chainlink:latest
+
+# Set the working directory to /chainlink
+WORKDIR /chainlink
+
+# Copy necessary files or scripts
+
+# Expose Chainlink ports
+EXPOSE 6688 6689
+
+# Start the Chainlink node
+CMD ["chainlink", "node"]
+
+===================================================================================================================================
+version: "3"
+services:
+  streamlit-app:
+    build:
+      context: ./streamlit-app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./streamlit-app:/app
+    depends_on:
+      - chainlink-node
+
+  chainlink-node:
+    build:
+      context: ./chainlink-node
+    ports:
+      - "6688:6688"
+      - "6689:6689"
+    # Define environment variables for Chainlink node configuration
+    environment:
+      - CHAINLINK_TLS_PORT=0
+      - CHAINLINK_PORT=6688
+      # Add more Chainlink configuration variables here
+=================================================================================================================================
+project-folder/
+├── docker-compose.yml
+├── streamlit-app/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── app.py
+└── chainlink-node/
+    ├── Dockerfile
+    └── ...
+===================================================================================================================================
