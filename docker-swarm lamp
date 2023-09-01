@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  php:
+    # ... PHP service configuration ...
+
+  mysql_master:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_DATABASE: yourdatabase
+      MYSQL_USER: youruser
+      MYSQL_PASSWORD: yourpassword
+    networks:
+      - private
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+  mysql_slave:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_DATABASE: yourdatabase
+      MYSQL_USER: youruser
+      MYSQL_PASSWORD: yourpassword
+      MYSQL_MASTER_HOST: mysql_master
+      MYSQL_MASTER_PORT: 3306
+      MYSQL_MASTER_ROOT_PASSWORD: yourpassword
+    networks:
+      - private
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.role == worker
+
+networks:
+  public:
+    external: true
+
+  private:
+
+version: '3.8'
+
+services:
+  php:
+    image: php:7.4-apache
+    ports:
+      - "80:80"
+    networks:
+      - public
+    deploy:
+      replicas: 3 # Adjust the number of replicas as needed
+      placement:
+        constraints:
+          - node.role == worker
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_DATABASE: yourdatabase
+      MYSQL_USER: youruser
+      MYSQL_PASSWORD: yourpassword
+    networks:
+      - private
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  public:
+    external: true
+
+  private:
+# Use an official PHP runtime as a parent image
+FROM php:7.4-apache
+
+# Copy your PHP application code into the container
+COPY ./your-php-code /var/www/html
+
+# Optionally, you can install additional PHP extensions or dependencies here
+# For example, if you need to install mysqli extension:
+# RUN docker-php-ext-install mysqli
+
+# Expose port 80 for Apache
+EXPOSE 80
+
+# Define any other configurations or settings as needed
+
+# Start Apache when the container runs
+CMD ["apache2-foreground"]
+
